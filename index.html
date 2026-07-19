@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cold Plunge Timer — Timing &amp; Breath Guide for Ice Baths</title>
+  <meta name="description" content="Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking. No app install needed." />
+  <link rel="canonical" href="https://coldplungetimer.pages.dev/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0ea5e9" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Cold Plunge Timer" />
+  <meta property="og:title" content="Cold Plunge Timer — Timing &amp; Breath Guide for Ice Baths" />
+  <meta property="og:description" content="Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking." />
+  <meta property="og:url" content="https://coldplungetimer.pages.dev/" />
+  <meta property="og:image" content="https://coldplungetimer.pages.dev/og-default.svg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cold Plunge Timer — Timing &amp; Breath Guide for Ice Baths" />
+  <meta name="twitter:description" content="Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking." />
+  <meta name="twitter:image" content="https://coldplungetimer.pages.dev/og-default.svg" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cold Plunge Timer",
+    "url": "https://coldplungetimer.pages.dev/",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Any (Web Browser)",
+    "description": "Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <style>
+    *, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: 'Inter', system-ui, -apple-system, sans-serif; line-height: 1.5; -webkit-text-size-adjust: 100%; }
+    body { background: #f0f9ff; color: #0f172a; min-height: 100vh; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1rem; }
+
+    /* Header */
+    .header { background: linear-gradient(135deg, #0c4a6e, #0ea5e9); color: white; padding: 1.5rem 0; text-align: center; }
+    .header h1 { font-size: 1.5rem; font-weight: 800; }
+    .header p { font-size: 0.875rem; opacity: 0.85; margin-top: 0.25rem; }
+    .streak { display: inline-block; margin-top: 0.5rem; background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.875rem; font-weight: 600; }
+
+    /* Cards */
+    .card { background: white; border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+
+    /* Timer Display */
+    .timer-display { text-align: center; padding: 2rem 0; }
+    .timer-circle { position: relative; width: 220px; height: 220px; margin: 0 auto; }
+    .timer-circle svg { transform: rotate(-90deg); width: 220px; height: 220px; }
+    .timer-circle .bg { fill: none; stroke: #e2e8f0; stroke-width: 6; }
+    .timer-circle .progress { fill: none; stroke: #0ea5e9; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.3s; }
+    .timer-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .timer-text .time { font-size: 3rem; font-weight: 800; font-variant-numeric: tabular-nums; color: #0f172a; }
+    .timer-text .label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Controls */
+    .controls { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+    .btn { padding: 0.625rem 1.5rem; border-radius: 999px; font-weight: 600; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.15s; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: #0ea5e9; color: white; }
+    .btn-primary:hover:not(:disabled) { background: #0284c7; }
+    .btn-secondary { background: #e2e8f0; color: #475569; }
+    .btn-secondary:hover:not(:disabled) { background: #cbd5e1; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover:not(:disabled) { background: #dc2626; }
+    .btn-outline { background: transparent; border: 2px solid #0ea5e9; color: #0ea5e9; }
+    .btn-outline:hover:not(:disabled) { background: #f0f9ff; }
+    .btn-success { background: #10b981; color: white; }
+    .btn-success:hover:not(:disabled) { background: #059669; }
+
+    /* Duration slider */
+    .slider-group { margin-top: 1rem; }
+    .slider-group label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem; }
+    .slider-row { display: flex; align-items: center; gap: 1rem; }
+    .slider-row input[type="range"] { flex: 1; accent-color: #0ea5e9; }
+    .slider-row .value { font-size: 1.25rem; font-weight: 700; color: #0ea5e9; min-width: 3rem; text-align: right; }
+
+    /* Temperature */
+    .temp-section { margin-top: 1rem; }
+    .temp-section label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem; }
+    .temp-input { display: flex; align-items: center; gap: 0.75rem; }
+    .temp-input input[type="range"] { flex: 1; accent-color: #06b6d4; }
+    .temp-input .value { font-size: 1.25rem; font-weight: 700; color: #06b6d4; min-width: 3.5rem; text-align: right; }
+    .temp-recommend { margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; }
+    .temp-recommend.safe { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .temp-recommend.caution { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .temp-recommend.warning { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* Box Breathing */
+    .breathing-section { margin-top: 1.5rem; }
+    .breathing-toggle { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 2px solid #e2e8f0; background: white; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.15s; }
+    .breathing-toggle.active { border-color: #0ea5e9; background: #f0f9ff; color: #0ea5e9; }
+    .breathing-circle-container { margin-top: 1rem; display: none; }
+    .breathing-circle-container.active { display: flex; flex-direction: column; align-items: center; }
+    .breath-circle { width: 160px; height: 160px; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; transition: all 1s ease-in-out; }
+    .breath-circle.inhale { width: 200px; height: 200px; background: #7dd3fc; }
+    .breath-circle.hold { width: 200px; height: 200px; background: #38bdf8; }
+    .breath-circle.exhale { width: 120px; height: 120px; background: #bae6fd; }
+    .breath-phase { font-size: 1.25rem; font-weight: 700; color: #0c4a6e; }
+    .breath-countdown { font-size: 0.875rem; color: #64748b; margin-top: 0.5rem; }
+
+    /* Mode Tabs */
+    .mode-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .mode-tab { flex: 1; padding: 0.625rem; text-align: center; border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; border: 2px solid #e2e8f0; background: white; transition: all 0.15s; }
+    .mode-tab.active { border-color: #0ea5e9; background: #f0f9ff; color: #0ea5e9; }
+
+    /* History */
+    .history-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin-top: 0.75rem; }
+    .history-table th { text-align: left; padding: 0.5rem 0.75rem; font-weight: 600; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+    .history-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f1f5f9; }
+    .history-table tr:hover td { background: #f8fafc; }
+    .empty-state { text-align: center; padding: 2rem; color: #94a3b8; font-size: 0.875rem; }
+
+    /* Section titles */
+    .section-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1.125rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem; }
+
+    /* Footer */
+    .footer { text-align: center; padding: 2rem 0; font-size: 0.75rem; color: #94a3b8; margin-top: 2rem; border-top: 1px solid #e2e8f0; }
+
+    @media (max-width: 640px) {
+      .timer-circle, .timer-circle svg { width: 180px; height: 180px; }
+      .timer-text .time { font-size: 2.5rem; }
+      .header h1 { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🧊 Cold Plunge Timer</h1>
+      <p>Time your ice bath safely with temp-guided duration &amp; breath work</p>
+      <div class="streak" id="streak-display">🔥 0-day streak</div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-bottom: 2rem;">
+
+    <!-- Timer Card -->
+    <div class="card">
+      <!-- Mode tabs -->
+      <div class="mode-tabs">
+        <div class="mode-tab active" data-mode="timer" onclick="switchMode('timer')">⏱ Timer</div>
+        <div class="mode-tab" data-mode="breathing" onclick="switchMode('breathing')">🌬️ Box Breathing</div>
+      </div>
+
+      <!-- Timer Mode -->
+      <div id="timer-mode">
+        <div class="timer-display">
+          <div class="timer-circle">
+            <svg viewBox="0 0 220 220">
+              <circle class="bg" cx="110" cy="110" r="100" />
+              <circle class="progress" id="progress-ring" cx="110" cy="110" r="100"
+                stroke-dasharray="628.32" stroke-dashoffset="628.32" />
+            </svg>
+            <div class="timer-text">
+              <div class="time" id="timer-display">05:00</div>
+              <div class="label" id="timer-state-label">Ready</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duration slider -->
+        <div class="slider-group">
+          <label>Duration: <span id="duration-label">5 min</span></label>
+          <div class="slider-row">
+            <span style="font-size:0.75rem;color:#94a3b8;">1</span>
+            <input type="range" id="duration-slider" min="1" max="20" value="5" step="1" oninput="updateDuration(this.value)" />
+            <span style="font-size:0.75rem;color:#94a3b8;">20</span>
+            <span class="value" id="duration-value">5</span>
+          </div>
+        </div>
+
+        <!-- Water Temperature -->
+        <div class="temp-section">
+          <label>🌡️ Water temperature</label>
+          <div class="temp-input">
+            <span style="font-size:0.75rem;color:#94a3b8;">0°C</span>
+            <input type="range" id="temp-slider" min="0" max="25" value="10" step="1" oninput="updateTemperature(this.value)" />
+            <span style="font-size:0.75rem;color:#94a3b8;">25°C</span>
+            <span class="value" id="temp-value">10°C</span>
+          </div>
+          <div class="temp-recommend safe" id="temp-recommend">🌡️ Comfortable temperature. 10-15 minutes is fine.</div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button class="btn btn-primary" id="btn-start" onclick="startTimer()">▶ Start</button>
+          <button class="btn btn-secondary" id="btn-pause" onclick="pauseTimer()" disabled>⏸ Pause</button>
+          <button class="btn btn-danger" id="btn-reset" onclick="resetTimer()" disabled>✕ Reset</button>
+        </div>
+      </div>
+
+      <!-- Breathing Mode -->
+      <div id="breathing-mode" style="display:none;">
+        <div class="breathing-circle-container active">
+          <div class="breath-circle" id="breath-circle">
+            <div style="text-align:center;">
+              <div class="breath-phase" id="breath-phase">Inhale</div>
+              <div class="breath-countdown" id="breath-countdown">4</div>
+            </div>
+          </div>
+          <div class="controls" style="margin-top:1.5rem;">
+            <button class="btn btn-success" id="btn-breath-start" onclick="startBreathing()">▶ Start Breathing</button>
+            <button class="btn btn-secondary" id="btn-breath-stop" onclick="stopBreathing()" disabled>■ Stop</button>
+          </div>
+          <p style="margin-top:1rem;font-size:0.875rem;color:#64748b;text-align:center;">
+            Box breathing: Inhale 4s → Hold 4s → Exhale 4s → Hold 4s<br/>
+            <span style="font-size:0.75rem;">Repeat until your timer ends or you feel calm.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session History Card -->
+    <div class="card">
+      <div class="section-title">📋 Session History</div>
+      <button class="btn btn-secondary" onclick="clearHistory()" style="font-size:0.75rem;padding:0.25rem 0.75rem;margin-bottom:0.75rem;">Clear all</button>
+      <div id="history-container">
+        <div class="empty-state">No sessions yet. Complete a cold plunge to log it here.</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Cold Plunge Timer — free, private, no account needed. All data stored locally in your browser.</p>
+      <p style="margin-top:0.25rem;">⚠️ Consult a doctor before starting cold exposure. Listen to your body.</p>
+    </div>
+  </footer>
+
+  <script>
+    // State
+    let timerState = { running: false, paused: false, remaining: 300, total: 300, interval: null };
+    let breathState = { running: false, interval: null, phase: 0, count: 4 };
+    let durationMinutes = 5;
+    let waterTemp = 10;
+    let audioCtx = null;
+
+    const CIRCUMFERENCE = 628.3185307179587;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      updateDuration(5);
+      updateTemperature(10);
+      renderHistory();
+      updateStreak();
+    });
+
+    // Switch mode
+    function switchMode(mode) {
+      document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+      document.getElementById('timer-mode').style.display = mode === 'timer' ? 'block' : 'none';
+      document.getElementById('breathing-mode').style.display = mode === 'breathing' ? 'block' : 'none';
+      if (mode === 'breathing' && timerState.running) {
+        // Keep timer running, just show breathing UI
+      }
+    }
+
+    // Duration
+    function updateDuration(val) {
+      durationMinutes = parseInt(val);
+      document.getElementById('duration-label').textContent = val + ' min';
+      document.getElementById('duration-value').textContent = val;
+      if (!timerState.running) {
+        timerState.total = val * 60;
+        timerState.remaining = val * 60;
+        updateTimerDisplay();
+      }
+    }
+
+    // Temperature
+    function updateTemperature(val) {
+      waterTemp = parseInt(val);
+      document.getElementById('temp-value').textContent = val + '°C';
+      const rec = document.getElementById('temp-recommend');
+
+      let min, max, level, msg;
+      if (val <= 2) { min=1; max=2; level='warning'; msg='🥶 Dangerously cold! Limit to 1–2 minutes. Risk of cold shock.';
+      } else if (val <= 5) { min=2; max=3; level='warning'; msg='🥶 Very cold. Limit to 2–3 minutes. Breathe steadily.';
+      } else if (val <= 8) { min=3; max=5; level='caution'; msg='🧊 Cold. Stay 3–5 minutes. Focus on calm breathing.';
+      } else if (val <= 10) { min=3; max=5; level='caution'; msg='🧊 Cold water. Recommended: 3–5 minutes. Listen to your body.';
+      } else if (val <= 12) { min=5; max=8; level='caution'; msg='🌊 Brisk. Recommended: 5–8 minutes. Comfortable with practice.';
+      } else if (val <= 15) { min=8; max=11; level='safe'; msg='🌊 Cool. Recommended: 8–11 minutes. Good for longer sessions.';
+      } else if (val <= 20) { min=11; max=15; level='safe'; msg='💧 Mild. Recommended: 11–15 minutes. Great for beginners.';
+      } else { min=15; max=20; level='safe'; msg='💧 Warm. Recommended: 15–20 minutes. More of a cool bath than a plunge.';
+      }
+
+      rec.className = 'temp-recommend ' + level;
+      rec.textContent = msg;
+
+      // Auto-suggest timer
+      if (!timerState.running) {
+        const suggested = Math.round((min + max) / 2);
+        document.getElementById('duration-slider').value = suggested;
+        updateDuration(suggested);
+      }
+    }
+
+    // Timer Display
+    function updateTimerDisplay() {
+      const m = Math.floor(timerState.remaining / 60);
+      const s = timerState.remaining % 60;
+      document.getElementById('timer-display').textContent = 
+        String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      
+      const progress = timerState.total > 0 ? (timerState.remaining / timerState.total) : 1;
+      const offset = CIRCUMFERENCE * (1 - progress);
+      document.getElementById('progress-ring').style.strokeDashoffset = offset;
+
+      if (timerState.running && !timerState.paused) {
+        document.getElementById('timer-state-label').textContent = 'Plunging...';
+      } else if (timerState.paused) {
+        document.getElementById('timer-state-label').textContent = 'Paused';
+      } else {
+        document.getElementById('timer-state-label').textContent = 'Ready';
+      }
+    }
+
+    // Timer controls
+    function startTimer() {
+      if (timerState.paused) {
+        timerState.paused = false;
+        timerState.running = true;
+        timerState.interval = setInterval(tick, 1000);
+        document.getElementById('btn-start').disabled = true;
+        document.getElementById('btn-pause').disabled = false;
+        document.getElementById('btn-reset').disabled = false;
+        document.getElementById('duration-slider').disabled = true;
+        document.getElementById('temp-slider').disabled = true;
+        document.getElementById('timer-state-label').textContent = 'Plunging...';
+        return;
+      }
+      if (timerState.running) return;
+      
+      timerState.total = durationMinutes * 60;
+      timerState.remaining = durationMinutes * 60;
+      timerState.running = true;
+      timerState.paused = false;
+      timerState.interval = setInterval(tick, 1000);
+      
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-pause').disabled = false;
+      document.getElementById('btn-reset').disabled = false;
+      document.getElementById('duration-slider').disabled = true;
+      document.getElementById('temp-slider').disabled = true;
+      document.getElementById('timer-state-label').textContent = 'Plunging...';
+    }
+
+    function tick() {
+      if (timerState.remaining > 0) {
+        timerState.remaining--;
+        updateTimerDisplay();
+      }
+      if (timerState.remaining <= 0) {
+        clearInterval(timerState.interval);
+        timerState.running = false;
+        playBell();
+        document.getElementById('timer-state-label').textContent = 'Done! 🎉';
+        document.getElementById('btn-start').textContent = '▶ Start';
+        document.getElementById('btn-start').disabled = false;
+        document.getElementById('btn-pause').disabled = true;
+        document.getElementById('duration-slider').disabled = false;
+        document.getElementById('temp-slider').disabled = false;
+        saveSession();
+        stopBreathing();
+      }
+    }
+
+    function pauseTimer() {
+      if (timerState.running && !timerState.paused) {
+        clearInterval(timerState.interval);
+        timerState.paused = true;
+        document.getElementById('btn-start').disabled = false;
+        document.getElementById('btn-start').textContent = '▶ Resume';
+        document.getElementById('btn-pause').disabled = true;
+        document.getElementById('timer-state-label').textContent = 'Paused';
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerState.interval);
+      timerState.running = false;
+      timerState.paused = false;
+      timerState.remaining = durationMinutes * 60;
+      timerState.total = durationMinutes * 60;
+      updateTimerDisplay();
+      
+      document.getElementById('btn-start').textContent = '▶ Start';
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('btn-pause').disabled = true;
+      document.getElementById('btn-reset').disabled = true;
+      document.getElementById('duration-slider').disabled = false;
+      document.getElementById('temp-slider').disabled = false;
+      document.getElementById('timer-state-label').textContent = 'Ready';
+      document.getElementById('timer-display').textContent = 
+        String(durationMinutes).padStart(2, '0') + ':00';
+      
+      stopBreathing();
+      stopBreathingTimer();
+    }
+
+    // Bell sound
+    function playBell() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = 880;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.5);
+        
+        // Second chime
+        setTimeout(() => {
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.frequency.value = 1108.73;
+          osc2.type = 'sine';
+          gain2.gain.setValueAtTime(0.5, audioCtx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2);
+          osc2.start();
+          osc2.stop(audioCtx.currentTime + 2);
+        }, 300);
+      } catch(e) { /* silent fallback */ }
+    }
+
+    // Breathing Timer (runs alongside plunge timer)
+    let breatheInterval = null;
+    function startBreathing() {
+      if (breathState.running) return;
+      breathState.running = true;
+      breathState.phase = 0;
+      breathState.count = 4;
+      
+      document.getElementById('btn-breath-start').disabled = true;
+      document.getElementById('btn-breath-stop').disabled = false;
+      
+      const phases = ['Inhale', 'Hold', 'Exhale', 'Hold'];
+      const circles = ['inhale', 'hold', 'exhale', 'hold'];
+      
+      function breathTick() {
+        const phase = phases[breathState.phase];
+        const circleClass = circles[breathState.phase];
+        
+        document.getElementById('breath-phase').textContent = phase;
+        document.getElementById('breath-countdown').textContent = breathState.count;
+        const circle = document.getElementById('breath-circle');
+        circle.className = 'breath-circle ' + circleClass;
+        
+        breathState.count--;
+        if (breathState.count < 0) {
+          breathState.count = 3;
+          breathState.phase = (breathState.phase + 1) % 4;
+        }
+      }
+      
+      breathTick();
+      breatheInterval = setInterval(breathTick, 1000);
+    }
+
+    function stopBreathing() {
+      clearInterval(breatheInterval);
+      breathState.running = false;
+      breathState.phase = 0;
+      breathState.count = 4;
+      document.getElementById('breath-phase').textContent = 'Inhale';
+      document.getElementById('breath-countdown').textContent = '4';
+      document.getElementById('breath-circle').className = 'breath-circle';
+      document.getElementById('btn-breath-start').disabled = false;
+      document.getElementById('btn-breath-stop').disabled = true;
+    }
+
+    function stopBreathingTimer() {
+      clearInterval(breatheInterval);
+      breathState.running = false;
+    }
+
+    // Session History
+    function getSessions() {
+      try { return JSON.parse(localStorage.getItem('coldplunge_sessions') || '[]'); }
+      catch { return []; }
+    }
+
+    function saveSession() {
+      const sessions = getSessions();
+      sessions.unshift({
+        date: new Date().toISOString(),
+        duration: timerState.total,
+        temp: waterTemp,
+        boxBreathing: breathState.running || document.querySelector('#breathing-mode').style.display !== 'none'
+      });
+      // Keep last 100
+      localStorage.setItem('coldplunge_sessions', JSON.stringify(sessions.slice(0, 100)));
+      renderHistory();
+      updateStreak();
+    }
+
+    function renderHistory() {
+      const sessions = getSessions();
+      const container = document.getElementById('history-container');
+      
+      if (sessions.length === 0) {
+        container.innerHTML = '<div class="empty-state">No sessions yet. Complete a cold plunge to log it here.</div>';
+        return;
+      }
+      
+      let html = `<table class="history-table">
+        <thead><tr><th>Date</th><th>Duration</th><th>Temp</th><th>Breath</th></tr></thead><tbody>`;
+      
+      sessions.slice(0, 20).forEach(s => {
+        const d = new Date(s.date);
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const mins = Math.floor(s.duration / 60);
+        const secs = s.duration % 60;
+        const durStr = mins + ':' + String(secs).padStart(2, '0');
+        html += `<tr>
+          <td>${dateStr}</td>
+          <td>${durStr}</td>
+          <td>${s.temp}°C</td>
+          <td>${s.boxBreathing ? '🌬️' : '—'}</td>
+        </tr>`;
+      });
+      
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function clearHistory() {
+      if (confirm('Clear all session history?')) {
+        localStorage.removeItem('coldplunge_sessions');
+        renderHistory();
+        updateStreak();
+      }
+    }
+
+    // Streak
+    function updateStreak() {
+      const sessions = getSessions();
+      if (sessions.length === 0) {
+        document.getElementById('streak-display').textContent = '🔥 0-day streak';
+        return;
+      }
+      
+      // Get unique dates (YYYY-MM-DD)
+      const dates = [...new Set(sessions.map(s => s.date.split('T')[0]))].sort().reverse();
+      
+      let streak = 0;
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      
+      // Check if today or yesterday has a session
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      
+      if (dates[0] !== todayStr && dates[0] !== yesterdayStr) {
+        document.getElementById('streak-display').textContent = '🔥 0-day streak';
+        return;
+      }
+      
+      streak = 1;
+      for (let i = 1; i < dates.length; i++) {
+        const expected = new Date(dates[i-1]);
+        expected.setDate(expected.getDate() - 1);
+        const expectedStr = expected.toISOString().split('T')[0];
+        if (dates[i] === expectedStr) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      
+      document.getElementById('streak-display').textContent = `🔥 ${streak}-day streak`;
+    }
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
