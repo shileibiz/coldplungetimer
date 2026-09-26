@@ -1,7 +1,7 @@
 {
   "name": "Cold Plunge Timer",
   "short_name": "Plunge Timer",
-  "description": "Time your ice bath safely with temperature-guided duration and box breathing",
+  "description": "User-set cold plunge timer with a box breathing guide and local session history",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f0f9ff",

@@ -1,4 +1,4 @@
-const CACHE = 'coldplunge-v1';
+const CACHE = 'coldplunge-v2';
 const URLS = ['/', '/manifest.json', '/favicon.svg'];
 
 self.addEventListener('install', (e) => {

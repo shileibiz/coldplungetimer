@@ -1,0 +1,15 @@
+*, ::before, ::after { box-sizing: border-box; }
+html { font-family: Inter, system-ui, -apple-system, sans-serif; line-height: 1.6; }
+body { margin: 0; background: #f0f9ff; color: #0f172a; }
+header { background: linear-gradient(135deg, #0c4a6e, #0ea5e9); color: white; text-align: center; padding: 1.5rem 1rem; }
+header h1 { margin: 0; font-size: 1.5rem; }
+header p { margin: 0.25rem 0 0; }
+main { max-width: 720px; margin: 2rem auto; padding: 2rem; background: white; border: 1px solid #e2e8f0; border-radius: 1rem; }
+main h2 { color: #0c4a6e; font-size: 1.25rem; margin: 1.5rem 0 0.75rem; }
+main h2:first-child { margin-top: 0; }
+main p, main li { color: #334155; }
+main li { margin-bottom: 0.5rem; }
+a { color: #0369a1; }
+.button { display: inline-block; background: #0284c7; color: white; border-radius: 999px; padding: 0.6rem 1rem; text-decoration: none; font-weight: 600; }
+footer { text-align: center; padding: 2rem 1rem; font-size: 0.875rem; }
+@media (max-width: 760px) { main { margin: 1rem; padding: 1.25rem; } }

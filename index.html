@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cold Plunge Timer — Timing &amp; Breath Guide for Ice Baths</title>
-  <meta name="description" content="Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking. No app install needed." />
-  <link rel="canonical" href="https://coldplungetimer.pages.dev/" />
+  <meta name="description" content="Free cold plunge timer with a box breathing guide, local session history, and streak tracking. Set your own timer in your browser." />
+  <link rel="canonical" href="__SITE_URL__/" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0ea5e9" />
@@ -14,25 +14,25 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Cold Plunge Timer" />
   <meta property="og:title" content="Cold Plunge Timer — Timing &amp; Breath Guide for Ice Baths" />
-  <meta property="og:description" content="Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking." />
-  <meta property="og:url" content="https://coldplungetimer.pages.dev/" />
-  <meta property="og:image" content="https://coldplungetimer.pages.dev/og-default.svg" />
+  <meta property="og:description" content="Free cold plunge timer with a box breathing guide, local session history, and streak tracking." />
+  <meta property="og:url" content="__SITE_URL__/" />
+  <meta property="og:image" content="__SITE_URL__/favicon.svg" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Cold Plunge Timer — Timing &amp; Breath Guide for Ice Baths" />
-  <meta name="twitter:description" content="Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking." />
-  <meta name="twitter:image" content="https://coldplungetimer.pages.dev/og-default.svg" />
+  <meta name="twitter:description" content="Free cold plunge timer with a box breathing guide, local session history, and streak tracking." />
+  <meta name="twitter:image" content="__SITE_URL__/favicon.svg" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Cold Plunge Timer",
-    "url": "https://coldplungetimer.pages.dev/",
+    "url": "__SITE_URL__/",
     "applicationCategory": "HealthApplication",
     "operatingSystem": "Any (Web Browser)",
-    "description": "Free cold plunge timer with temperature-based duration recommendations, box breathing guide, session history, and daily streak tracking.",
+    "description": "Free cold plunge timer with a box breathing guide, local session history, and streak tracking.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
   }
   </script>
@@ -85,16 +85,8 @@
     .slider-row input[type="range"] { flex: 1; accent-color: #0ea5e9; }
     .slider-row .value { font-size: 1.25rem; font-weight: 700; color: #0ea5e9; min-width: 3rem; text-align: right; }
 
-    /* Temperature */
-    .temp-section { margin-top: 1rem; }
-    .temp-section label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem; }
-    .temp-input { display: flex; align-items: center; gap: 0.75rem; }
-    .temp-input input[type="range"] { flex: 1; accent-color: #06b6d4; }
-    .temp-input .value { font-size: 1.25rem; font-weight: 700; color: #06b6d4; min-width: 3.5rem; text-align: right; }
-    .temp-recommend { margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; }
-    .temp-recommend.safe { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-    .temp-recommend.caution { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-    .temp-recommend.warning { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .safety-note { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-top: 1rem; font-size: 0.875rem; color: #7c2d12; }
+    .safety-note a { color: inherit; font-weight: 600; }
 
     /* Box Breathing */
     .breathing-section { margin-top: 1.5rem; }
@@ -138,12 +130,13 @@
   <header class="header">
     <div class="container">
       <h1>🧊 Cold Plunge Timer</h1>
-      <p>Time your ice bath safely with temp-guided duration &amp; breath work</p>
+      <p>A simple timer, breathing guide, and local session history</p>
       <div class="streak" id="streak-display">🔥 0-day streak</div>
     </div>
   </header>
 
   <main class="container" style="padding-bottom: 2rem;">
+    <p class="safety-note">If you have heart disease, high blood pressure, are pregnant, or have another health concern, consult a doctor before cold exposure. <a href="/disclaimer.html">Read the safety disclaimer</a>.</p>
 
     <!-- Timer Card -->
     <div class="card">
@@ -163,7 +156,7 @@
                 stroke-dasharray="628.32" stroke-dashoffset="628.32" />
             </svg>
             <div class="timer-text">
-              <div class="time" id="timer-display">05:00</div>
+              <div class="time" id="timer-display">02:00</div>
               <div class="label" id="timer-state-label">Ready</div>
             </div>
           </div>
@@ -171,25 +164,13 @@
 
         <!-- Duration slider -->
         <div class="slider-group">
-          <label>Duration: <span id="duration-label">5 min</span></label>
+          <label>Duration: <span id="duration-label">2 min</span> (set your own timer)</label>
           <div class="slider-row">
             <span style="font-size:0.75rem;color:#94a3b8;">1</span>
-            <input type="range" id="duration-slider" min="1" max="20" value="5" step="1" oninput="updateDuration(this.value)" />
+            <input type="range" id="duration-slider" min="1" max="20" value="2" step="1" oninput="updateDuration(this.value)" />
             <span style="font-size:0.75rem;color:#94a3b8;">20</span>
-            <span class="value" id="duration-value">5</span>
+            <span class="value" id="duration-value">2</span>
           </div>
-        </div>
-
-        <!-- Water Temperature -->
-        <div class="temp-section">
-          <label>🌡️ Water temperature</label>
-          <div class="temp-input">
-            <span style="font-size:0.75rem;color:#94a3b8;">0°C</span>
-            <input type="range" id="temp-slider" min="0" max="25" value="10" step="1" oninput="updateTemperature(this.value)" />
-            <span style="font-size:0.75rem;color:#94a3b8;">25°C</span>
-            <span class="value" id="temp-value">10°C</span>
-          </div>
-          <div class="temp-recommend safe" id="temp-recommend">🌡️ Comfortable temperature. 10-15 minutes is fine.</div>
         </div>
 
         <!-- Controls -->
@@ -215,7 +196,7 @@
           </div>
           <p style="margin-top:1rem;font-size:0.875rem;color:#64748b;text-align:center;">
             Box breathing: Inhale 4s → Hold 4s → Exhale 4s → Hold 4s<br/>
-            <span style="font-size:0.75rem;">Repeat until your timer ends or you feel calm.</span>
+            <span style="font-size:0.75rem;">Stop if you feel dizzy or uncomfortable. Never hold your breath underwater.</span>
           </p>
         </div>
       </div>
@@ -236,6 +217,10 @@
       <p>Cold Plunge Timer — free, private, no account needed. All data stored locally in your browser.</p>
       <p style="margin-top:0.25rem;">⚠️ Consult a doctor before starting cold exposure. Listen to your body.</p>
       <p style="margin-top:0.75rem;">
+        <a href="/how-to-use/" style="color:#64748b;">How to use</a> ·
+        <a href="/cold-plunge-breathing/" style="color:#64748b;">Breathing</a> ·
+        <a href="/cold-plunge-safety/" style="color:#64748b;">Safety</a> ·
+        <a href="/disclaimer.html" style="color:#64748b;">Disclaimer</a> ·
         <a href="/privacy.html" style="color:#64748b;">Privacy</a> ·
         <a href="/terms.html" style="color:#64748b;">Terms</a> ·
         <a href="/about.html" style="color:#64748b;">About</a> ·
@@ -246,18 +231,16 @@
 
   <script>
     // State
-    let timerState = { running: false, paused: false, remaining: 300, total: 300, interval: null };
+    let timerState = { running: false, paused: false, remaining: 120, total: 120, interval: null };
     let breathState = { running: false, interval: null, phase: 0, count: 4 };
-    let durationMinutes = 5;
-    let waterTemp = 10;
+    let durationMinutes = 2;
     let audioCtx = null;
 
     const CIRCUMFERENCE = 628.3185307179587;
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-      updateDuration(5);
-      updateTemperature(10);
+      updateDuration(2);
       renderHistory();
       updateStreak();
     });
@@ -282,34 +265,6 @@
         timerState.total = val * 60;
         timerState.remaining = val * 60;
         updateTimerDisplay();
-      }
-    }
-
-    // Temperature
-    function updateTemperature(val) {
-      waterTemp = parseInt(val);
-      document.getElementById('temp-value').textContent = val + '°C';
-      const rec = document.getElementById('temp-recommend');
-
-      let min, max, level, msg;
-      if (val <= 2) { min=1; max=2; level='warning'; msg='🥶 Dangerously cold! Limit to 1–2 minutes. Risk of cold shock.';
-      } else if (val <= 5) { min=2; max=3; level='warning'; msg='🥶 Very cold. Limit to 2–3 minutes. Breathe steadily.';
-      } else if (val <= 8) { min=3; max=5; level='caution'; msg='🧊 Cold. Stay 3–5 minutes. Focus on calm breathing.';
-      } else if (val <= 10) { min=3; max=5; level='caution'; msg='🧊 Cold water. Recommended: 3–5 minutes. Listen to your body.';
-      } else if (val <= 12) { min=5; max=8; level='caution'; msg='🌊 Brisk. Recommended: 5–8 minutes. Comfortable with practice.';
-      } else if (val <= 15) { min=8; max=11; level='safe'; msg='🌊 Cool. Recommended: 8–11 minutes. Good for longer sessions.';
-      } else if (val <= 20) { min=11; max=15; level='safe'; msg='💧 Mild. Recommended: 11–15 minutes. Great for beginners.';
-      } else { min=15; max=20; level='safe'; msg='💧 Warm. Recommended: 15–20 minutes. More of a cool bath than a plunge.';
-      }
-
-      rec.className = 'temp-recommend ' + level;
-      rec.textContent = msg;
-
-      // Auto-suggest timer
-      if (!timerState.running) {
-        const suggested = Math.round((min + max) / 2);
-        document.getElementById('duration-slider').value = suggested;
-        updateDuration(suggested);
       }
     }
 
@@ -343,7 +298,6 @@
         document.getElementById('btn-pause').disabled = false;
         document.getElementById('btn-reset').disabled = false;
         document.getElementById('duration-slider').disabled = true;
-        document.getElementById('temp-slider').disabled = true;
         document.getElementById('timer-state-label').textContent = 'Plunging...';
         return;
       }
@@ -359,7 +313,6 @@
       document.getElementById('btn-pause').disabled = false;
       document.getElementById('btn-reset').disabled = false;
       document.getElementById('duration-slider').disabled = true;
-      document.getElementById('temp-slider').disabled = true;
       document.getElementById('timer-state-label').textContent = 'Plunging...';
     }
 
@@ -377,7 +330,6 @@
         document.getElementById('btn-start').disabled = false;
         document.getElementById('btn-pause').disabled = true;
         document.getElementById('duration-slider').disabled = false;
-        document.getElementById('temp-slider').disabled = false;
         saveSession();
         stopBreathing();
       }
@@ -407,7 +359,6 @@
       document.getElementById('btn-pause').disabled = true;
       document.getElementById('btn-reset').disabled = true;
       document.getElementById('duration-slider').disabled = false;
-      document.getElementById('temp-slider').disabled = false;
       document.getElementById('timer-state-label').textContent = 'Ready';
       document.getElementById('timer-display').textContent = 
         String(durationMinutes).padStart(2, '0') + ':00';
@@ -509,7 +460,6 @@
       sessions.unshift({
         date: new Date().toISOString(),
         duration: timerState.total,
-        temp: waterTemp,
         boxBreathing: breathState.running || document.querySelector('#breathing-mode').style.display !== 'none'
       });
       // Keep last 100
@@ -528,7 +478,7 @@
       }
       
       let html = `<table class="history-table">
-        <thead><tr><th>Date</th><th>Duration</th><th>Temp</th><th>Breath</th></tr></thead><tbody>`;
+        <thead><tr><th>Date</th><th>Duration</th><th>Breath</th></tr></thead><tbody>`;
       
       sessions.slice(0, 20).forEach(s => {
         const d = new Date(s.date);
@@ -539,7 +489,6 @@
         html += `<tr>
           <td>${dateStr}</td>
           <td>${durStr}</td>
-          <td>${s.temp}°C</td>
           <td>${s.boxBreathing ? '🌬️' : '—'}</td>
         </tr>`;
       });
